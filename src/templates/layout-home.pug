@@ -1,32 +1,35 @@
+//- Стандартный шаблон страницы
+
 include ../mixins.pug
 
 doctype html
-html(class="no-js  page", lang="ru")
+html(class='no-js  page', lang='ru')
 
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1')
+    //- Edge и ряд мобильных браузеров слишком умны. Отключим это.
+    meta(name='format-detection', content='telephone=no')
+    meta(name='format-detection', content='date=no')
+    meta(name='format-detection', content='address=no')
+    meta(name='format-detection', content='email=no')
+    meta(content='notranslate', name='google')
 
     block meta
       title Home
 
     block head
-      link(rel="stylesheet", href="css/style.css")
-      link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
+      link(rel='stylesheet', href='css/style.min.css')
       script.
         document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
 
   body
-    .page__inner
-      .page__content
+    noscript У вас отключен JavaScript. Это пугает.
 
-        div Тут «шапка»
-          block nav
-
-        block content
-
-      .page__footer-wrapper
-        div Тут «подвал»
+    block header
+    block content
+    block footer
+          
 
     block page-bottom
-      script(src="js/script.min.js")
+      script(src='js/script.min.js')
