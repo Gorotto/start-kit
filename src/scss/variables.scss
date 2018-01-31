@@ -1,10 +1,10 @@
 $gray-dark:                   hsl(0, 0%, 20%);
 $gray:                        hsl(0, 0%, 50%);
 $gray-light:                  hsl(0, 0%, 80%);
-
+$perp:                        #5d337e;
 $text-color:                  $gray-dark;
 
-$font-family:                 'Open Sans_my', sans-serif;
+$font-family:                 'Geometria', sans-serif;
 $font-size:                   14px;
 $line-height:                 1.4;
 
@@ -14,6 +14,10 @@ $screen-md:                   992px;
 $screen-lg:                   1200px;
 $screen-xl:                   1920px;
 
+
+
+$gr:                           'Geometria', sans-serif;
+$gb:                           'GeometriaBold', sans-serif;
 
 .container {
   display: block;

@@ -1,10 +1,13 @@
 // Это диспетчер подключений, тут не должно быть ничего, кроме импортов
 
 // Глобальные подключения
+
 @import 'variables.scss';
-@import 'fonts.scss';
 @import 'elements.scss';
+@import 'fonts.scss';
+
 @import 'grid.scss';
+
 
 // Растровый спрайт: примеси-генераторы правил
 @import './src/blocks/sprite-png/sprite-png.scss';
@@ -13,5 +16,3 @@
 // БЭМ-блоки. Один БЭМ-блок = 1 файл. ВСЕГДА.
 @import './src/blocks/page/page.scss';
 @import './src/blocks/header/header.scss';
-@import './src/blocks/about/about.scss';
-@import './src/blocks/schedule/schedule.scss';

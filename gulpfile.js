@@ -53,6 +53,7 @@ let postCssPlugins = [
 // Изображения, которые нужно копировать
 let images = [
   dirs.source + '/img/*.{gif,png,jpg,jpeg,svg,ico}',
+  dirs.source + '/img/**/*.{gif,png,jpg,jpeg,svg,ico}',
   dirs.source + '/blocks/**/img/*.{gif,png,jpg,jpeg,svg}',
   '!' + dirs.source + '/blocks/sprite-png/png/*',
   '!' + dirs.source + '/blocks/sprite-svg/svg/*',
@@ -60,22 +61,31 @@ let images = [
 
 // Cписок обрабатываемых файлов в указанной последовательности
 let jsList = [
-  './node_modules/jquery/dist/jquery.min.js',
-  './node_modules/jquery-migrate/dist/jquery-migrate.min.js',
-  './node_modules/svg4everybody/dist/svg4everybody.js',
-  './node_modules/object-fit-images/dist/ofi.js',
+  // './node_modules/jquery/dist/jquery.min.js',
+  // './node_modules/jquery-migrate/dist/jquery-migrate.min.js',
+  // './node_modules/svg4everybody/dist/svg4everybody.js',
+  // './node_modules/object-fit-images/dist/ofi.js',
   dirs.source + '/js/script.js',
 ];
 // Cписок обрабатываемых файлов в указанной последовательности
 let jsLibs = [
-  dirs.source + '/js-libs/jquery-2.1.3.min.js',
-  dirs.source + '/js-libs/jquery.mousewheel.js',
-  dirs.source + '/js-libs/aos.js',
-  dirs.source + '/js-libs/scrolloverflow.min.js',
-  dirs.source + '/js-libs/jquery.parallax.min.js',
-  dirs.source + '/js-libs/jquery.fullpage.min.js',
-  dirs.source + '/js-libs/jquery-ui.min.js',
+  dirs.source + '/js-libs/jquery.js',
+  dirs.source + '/js-libs/jquery-migrate.js',
+  dirs.source + '/js-libs/svg4everybody.js',
+  dirs.source + '/js-libs/ofis.js',
+  // dirs.source + '/js-libs/plyr.js',
+  // dirs.source + '/js-libs/owl.carousel.js',
 ];
+// Cписок css-libs
+gulp.task('css-libs', function () { // Создаем таск css-libs
+
+    return gulp.src(dirs.source + '/css-libs/*.css') // Берем источник
+      .pipe(postcss(postCssPlugins))// сжымаем
+      .pipe(concat('libs.min.css'))                        // объеденяем в файл
+      .pipe(cleanCSS())                                    // сжимаем и оптимизируем
+      .pipe(gulp.dest(dirs.build + '/css/'));              // Выгружаем результата в папку app/css
+
+});
 
 // Компиляция и обработка стилей
 gulp.task('style', function () {
@@ -237,6 +247,8 @@ gulp.task('js', function () {
     callback();
   }
 });
+
+// js-libs js
 gulp.task('jsl', function () {
   if(jsLibs.length) {
     return gulp.src(jsLibs)
@@ -251,26 +263,14 @@ gulp.task('jsl', function () {
   }
 });
 
-// js-libs js
-// gulp.task('js-libs', function () {
-//     return gulp.src([dirs.source + '/js-libs/jquery.mousewheel.js',
-//         dirs.source + '/js-libs/jquery-ui.min.js'])// Берем все необходимые библиотеки
-//         .pipe(plumber())
-//         .pipe(concat('js-libs.min.js'))// Собираем их в кучу в новом файле js-libs.js
-//         // .pipe(rename({
-//         //     suffix: ".min",// Добавляем суффикс .min
-//         //     extname: ".js"// Добавляем окончание .js
-//         // }))
-//         pipe(uglify())
-//         // .pipe(plumber.stop())
-//         .pipe(gulp.dest(dirs.build + '/js'));// Выгружаем в папку js
-// });
+
+
 // Сборка всего
 gulp.task('build', function (callback) {
   gulpSequence(
     'clean',
     ['sprite:svg', 'sprite:png'],
-    ['style', 'jsl', 'js', 'copy:img', 'copy:fonts'],
+    ['css-libs', 'style', 'jsl', 'js', 'copy:img', 'copy:fonts'],
     'html',
     'pug',
     callback
@@ -294,6 +294,9 @@ gulp.task('serve', ['build'], function() {
     dirs.source + '/scss/variables.scss',
     dirs.source + '/blocks/**/*.scss',
   ], ['style']);
+  gulp.watch([
+    dirs.source + '/css-libs/*.css',
+  ], ['css-libs']);
   //слежение за библиотеками js
   // gulp.watch([
   //   dirs.source + '/js-libs/*.js',

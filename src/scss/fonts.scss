@@ -1,2 +1,19 @@
-// Подключение своих шрифтов.
-// Не пишите тут ничего, кроме @font-face
+// @font-face {
+//     font-family: 'GeometriaBold';
+//     src: url('/fonts/GeometriaBold.eot');
+//     src: url('/fonts/GeometriaBold.eot') format('embedded-opentype'),
+//          url('/fonts/GeometriaBold.woff2') format('woff2'),
+//          url('/fonts/GeometriaBold.woff') format('woff'),
+//          url('/fonts/GeometriaBold.ttf') format('truetype'),
+//          url('/fonts/GeometriaBold.svg#GeometriaBold') format('svg');
+// }
+//
+// @font-face {
+//     font-family: 'Geometria';
+//     src: url('/fonts/Geometria.eot');
+//     src: url('/fonts/Geometria.eot') format('embedded-opentype'),
+//          url('/fonts/Geometria.woff2') format('woff2'),
+//          url('/fonts/Geometria.woff') format('woff'),
+//          url('/fonts/Geometria.ttf') format('truetype'),
+//          url('/fonts/Geometria.svg#Geometria') format('svg');
+// }
