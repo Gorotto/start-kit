@@ -20,12 +20,12 @@ $gr:                           'Geometria', sans-serif;
 $gb:                           'GeometriaBold', sans-serif;
 
 .container {
-  display: block;
   box-sizing: border-box;
   padding-right: 10px;
   padding-left: 10px;
   margin-right: auto;
   margin-left: auto;
-  max-width: 1160px;
+  max-width: 1340px;
+  flex-basis: 1340px;
   font-family: sans-serif;
 }
