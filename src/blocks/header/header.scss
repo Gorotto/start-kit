@@ -3,59 +3,47 @@
 // Очередность: http://nicothin.github.io/idiomatic-pre-CSS/#priority
 
 .header {
-
-  background-image: url("../img/header--fon.png");
-  height: 722px;
-  object-fit: cover;
-
-  .logo {
-    width: 168px;
-
-  }
-
-  .nav {
-    width: 100%;
-    display: -webkit-flex;
-    display: -ms-flex;
-    display: flex;
-    flex-flow: row wrap;
-    padding-top: 15px;
-    box-sizing: border-box;
-
-    &__menu {
-      width: calc(100% - 168px);
-      display: -webkit-flex;
-      display: -ms-flex;
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: flex-end;
-      padding: 0;
-      margin: 0;
-      li {
-        list-style-type: none;
-        margin-left: 15px;
-        a {
-          color: #ffffff;
-          font-family: $gr;
-          font-size: 12px;
-          font-weight: 400;
-          line-height: 60px;
-          text-transform: uppercase;
-          text-decoration: none;
-        }
-        &:hover a {
-          color: #5d337e;
-          letter-spacing: 0.02px;
-        }
-      }
-    }
-  }
-
-  &__subtitle {
-    color: #fff;
-    margin: 0;
-  }
-
-
+  // 
+  // .logo {
+  //   width: 168px;
+  // }
+  //
+  // .nav {
+  //   width: 100%;
+  //   display: -webkit-flex;
+  //   display: -ms-flex;
+  //   display: flex;
+  //   flex-flow: row wrap;
+  //   padding-top: 15px;
+  //   box-sizing: border-box;
+  //
+  //   &__menu {
+  //     width: calc(100% - 168px);
+  //     display: -webkit-flex;
+  //     display: -ms-flex;
+  //     display: flex;
+  //     flex-flow: row wrap;
+  //     justify-content: flex-end;
+  //     padding: 0;
+  //     margin: 0;
+  //     li {
+  //       list-style-type: none;
+  //       margin-left: 15px;
+  //       a {
+  //         color: #ffffff;
+  //         font-family: $gr;
+  //         font-size: 12px;
+  //         font-weight: 400;
+  //         line-height: 60px;
+  //         text-transform: uppercase;
+  //         text-decoration: none;
+  //       }
+  //       &:hover a {
+  //         color: #5d337e;
+  //         letter-spacing: 0.02px;
+  //       }
+  //     }
+  //   }
+  // }
 
 }
