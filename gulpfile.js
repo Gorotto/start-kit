@@ -73,8 +73,8 @@ let jsLibs = [
   dirs.source + '/js-libs/jquery-migrate.js',
   dirs.source + '/js-libs/svg4everybody.js',
   dirs.source + '/js-libs/ofis.js',
-  // dirs.source + '/js-libs/plyr.js',
   // dirs.source + '/js-libs/owl.carousel.js',
+  // dirs.source + '/js-libs/jquery.parallax.js',
 ];
 // Cписок css-libs
 gulp.task('css-libs', function () { // Создаем таск css-libs
@@ -105,10 +105,11 @@ gulp.task('style', function () {
     .pipe(postcss(postCssPlugins))                         // делаем постпроцессинг
     .pipe(sourcemaps.write('/'))                           // записываем карту кода как отдельный файл
     .pipe(gulp.dest(dirs.build + '/css/'))                 // записываем CSS-файл
-    .pipe(browserSync.stream({match: '**/*.css'}))         // укажем browserSync необходимость обновить страницы в браузере
+
     .pipe(rename('style.min.css'))                         // переименовываем (сейчас запишем рядом то же самое, но минимизированное)
     .pipe(cleanCSS())                                      // сжимаем и оптимизируем
-    .pipe(gulp.dest(dirs.build + '/css/'));                // записываем CSS-файл
+    .pipe(gulp.dest(dirs.build + '/css/'))                // записываем CSS-файл
+    .pipe(browserSync.stream({match: '**/*.css'}));         // укажем browserSync необходимость обновить страницы в браузере
 });
 
 // Копирование и обработка HTML (ВНИМАНИЕ: при совпадении имён Pug приоритетнее!)
@@ -292,6 +293,8 @@ gulp.task('serve', ['build'], function() {
   gulp.watch([
     dirs.source + '/scss/style.scss',
     dirs.source + '/scss/variables.scss',
+    // dirs.source + '/scss/elements.scss',
+    // dirs.source + '/scss/grid.scss',
     dirs.source + '/blocks/**/*.scss',
   ], ['style']);
   gulp.watch([
