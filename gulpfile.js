@@ -293,8 +293,8 @@ gulp.task('serve', ['build'], function() {
   gulp.watch([
     dirs.source + '/scss/style.scss',
     dirs.source + '/scss/variables.scss',
-    // dirs.source + '/scss/elements.scss',
-    // dirs.source + '/scss/grid.scss',
+    dirs.source + '/scss/elements.scss',
+    dirs.source + '/scss/grid.scss',
     dirs.source + '/blocks/**/*.scss',
   ], ['style']);
   gulp.watch([
