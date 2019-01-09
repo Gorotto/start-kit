@@ -9,6 +9,7 @@ const dirs = {
 // Определим необходимые инструменты
 const gulp = require('gulp');
 const gulpSequence = require('gulp-sequence');
+const extender = require('gulp-html-extend');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
@@ -72,7 +73,7 @@ let jsLibs = [
   dirs.source + '/js-libs/jquery.js',
   dirs.source + '/js-libs/jquery-migrate.js',
   dirs.source + '/js-libs/svg4everybody.js',
-  dirs.source + '/js-libs/ofis.js',
+  dirs.source + '/js-libs/ofi.js',
   // dirs.source + '/js-libs/owl.carousel.js',
   // dirs.source + '/js-libs/jquery.parallax.js',
 ];
@@ -113,12 +114,16 @@ gulp.task('style', function () {
 });
 
 // Копирование и обработка HTML (ВНИМАНИЕ: при совпадении имён Pug приоритетнее!)
-gulp.task('html', function() {
-  return gulp.src(dirs.source + '/*.html')
-    .pipe(replace(/\n\s*<!--DEV[\s\S]+?-->/gm, ''))        // Убираем комменты для разработчиков
-    .pipe(gulp.dest(dirs.build));
-});
-
+// gulp.task('html', function() {
+//   return gulp.src(dirs.source + '/*.html')
+//     .pipe(replace(/\n\s*<!--DEV[\s\S]+?-->/gm, ''))        // Убираем комменты для разработчиков
+//     .pipe(gulp.dest(dirs.build));
+// });
+// gulp.task('extend-blocks', function () {
+//      return   gulp.src(dirs.source + '/blocks/**/*.html')
+//         .pipe(extender({annotations: true, verbose: false})) // default options
+//         .pipe(gulp.dest('./'))
+// });
 // Компиляция pug
 gulp.task('pug', function() {
   return gulp.src([
@@ -151,25 +156,6 @@ gulp.task('copy:fonts', function () {
       dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}',
     ])
     .pipe(gulp.dest(dirs.build + '/fonts'));
-});
-
-// Ручная оптимизация изображений
-// Использование: folder=src/img npm start img:opt
-const folder = process.env.folder;
-gulp.task('img:opt', function (callback) {
-  if(folder){
-    return gulp.src(folder + '/*.{jpg,jpeg,gif,png,svg}')
-      .pipe(imagemin({
-        progressive: true,
-        svgoPlugins: [{removeViewBox: false}],
-        use: [pngquant()]
-      }))
-      .pipe(gulp.dest(folder));
-  }
-  else {
-    console.log('Не указана папка с картинками. Пример вызова команды: folder=src/blocks/test-block/img npm start img:opt');
-    callback();
-  }
 });
 
 // Сборка SVG-спрайта
@@ -207,9 +193,18 @@ gulp.task('sprite:svg', function (callback) {
 // Сборка PNG-спрайта
 let spritePngPath = dirs.source + '/blocks/sprite-png/png/';
 gulp.task('sprite:png', function () {
+  del(dirs.srcPath + dirs.blocksDirName + '/sprite-png/img/*.png');
   let fileName = 'sprite-' + Math.random().toString().replace(/[^0-9]/g, '') + '.png';
   let spriteData = gulp.src(spritePngPath + '*.png')
-    .pipe(plumber({ errorHandler: onError }))
+    // .pipe(plumber({
+    //   errorHandler: function(err) {
+    //     notify.onError({
+    //       title: 'Png sprite error',
+    //       message: err.message
+    //     })(err);
+    //     this.emit('end');
+    //   }
+    // }))
     .pipe(spritesmith({
       imgName: fileName,
       cssName: 'sprite-png.scss',
@@ -225,26 +220,65 @@ gulp.task('sprite:png', function () {
   return merge(imgStream, cssStream);
 });
 
+
+// Ручная оптимизация изображений
+// Использование: folder=src/img npm start img:opt
+const folder = process.env.folder;
+gulp.task('img:opt', function (callback) {
+  const imagemin = require('gulp-imagemin');
+  // const pngquant = require('imagemin-pngquant');
+  if(folder){
+    console.log('---------- Оптимизация картинок');
+    return gulp.src(folder + '/*.{jpg,jpeg,gif,png,svg}')
+      .pipe(imagemin([
+        imagemin.gifsicle({ interlaced: true }),
+        imagemin.jpegtran({ progressive: true }),
+        imagemin.optipng({ optimizationLevel: 5 }),
+        imagemin.svgo({
+          plugins: [
+            { removeViewBox: false },
+            { cleanupIDs: false }
+          ]
+        })
+      ]))
+      .pipe(gulp.dest(folder));
+  }
+  else {
+    console.log('---------- Оптимизация картинок: ошибка (не указана папка)');
+    console.log('---------- Пример вызова команды: folder=src/blocks/block-name/img npm start img:opt');
+    callback();
+  }
+});
+
+
 // Очистка перед сборкой
 gulp.task('clean', function () {
   return del([
     dirs.build + '/**/*',
     '!' + dirs.build + '/readme.md',
-    dirs.source + '/blocks/sprite-png/img',
+    dirs.source + '/blocks/sprite-png/img', 
+
   ]);
 });
 
 // Конкатенация и углификация Javascript
-gulp.task('js', function () {
+gulp.task('js', function (callback) {
   if(jsList.length) {
     return gulp.src(jsList)
-      .pipe(plumber({ errorHandler: onError }))             // не останавливаем автоматику при ошибках
+      .pipe(plumber({
+        errorHandler: function(err) {
+          notify.onError({
+            title: 'Javascript concat/uglify error',
+            message: err.message
+          })(err);
+          this.emit('end');
+        }
+      }))            // не останавливаем автоматику при ошибках
       .pipe(concat('script.min.js'))                        // конкатенируем все файлы в один с указанным именем
       .pipe(uglify())                                       // сжимаем
       .pipe(gulp.dest(dirs.build + '/js'));                 // записываем
   }
   else {
-    console.log('Javascript не обрабатывается');
     callback();
   }
 });
@@ -253,7 +287,15 @@ gulp.task('js', function () {
 gulp.task('jsl', function () {
   if(jsLibs.length) {
     return gulp.src(jsLibs)
-      .pipe(plumber({ errorHandler: onError }))             // не останавливаем автоматику при ошибках
+      .pipe(plumber({
+        errorHandler: function(err) {
+          notify.onError({
+            title: 'Javascript concat/uglify error',
+            message: err.message
+          })(err);
+          this.emit('end');
+        }
+      }))              // не останавливаем автоматику при ошибках
       .pipe(concat('libs.min.js'))                        // конкатенируем все файлы в один с указанным именем
       .pipe(uglify())                                       // сжимаем
       .pipe(gulp.dest(dirs.build + '/js'));                 // записываем
@@ -267,85 +309,96 @@ gulp.task('jsl', function () {
 
 
 // Сборка всего
-gulp.task('build', function (callback) {
-  gulpSequence(
-    'clean',
-    ['sprite:svg', 'sprite:png'],
-    ['css-libs', 'style', 'jsl', 'js', 'copy:img', 'copy:fonts'],
-    'html',
-    'pug',
-    callback
-  );
-});
-
-// Задача по умолчанию
-gulp.task('default', ['serve']);
+gulp.task('build', gulp.series(
+  'clean',
+  gulp.parallel('sprite:svg', 'sprite:png'),
+  gulp.parallel(
+    'css-libs',
+    'style',
+    'jsl',
+    'js',
+    'copy:img',
+    'copy:fonts'
+),
+  'pug'
+  // 'extend-blocks',
+  // 'html'
+));
 
 // Локальный сервер, слежение
-gulp.task('serve', ['build'], function() {
+gulp.task('serve', gulp.series('build', function() {
+
   browserSync.init({
     server: dirs.build,
+    port: 8080,
     startPath: 'index.html',
     open: false,
-    port: 8080,
   });
+
   // Слежение за стилями
-  gulp.watch([
+  let stylePaths = [
     dirs.source + '/scss/style.scss',
     dirs.source + '/scss/variables.scss',
     dirs.source + '/scss/elements.scss',
     dirs.source + '/scss/grid.scss',
     dirs.source + '/blocks/**/*.scss',
-  ], ['style']);
-  gulp.watch([
-    dirs.source + '/css-libs/*.css',
-  ], ['css-libs']);
+  ];
+  gulp.watch(stylePaths, gulp.series('style'));
+
+  gulp.watch(dirs.source + '/css-libs/*.css',
+  gulp.series('css-libs', reload));
+
+  // Слежение за html
+  // gulp.watch(dirs.source + '/*.html',
+  // gulp.series('html', reload));
+
+  // Слежение за html вставкой
+  // gulp.watch(dirs.source + '/**/*.html',
+  // gulp.series('extend-blocks', reload));
+
+  // Слежение за pug
+  gulp.watch(dirs.source + '/**/*.pug',
+  gulp.series('pug', reload));
+
+  // Слежение за изображениями
+  if(images.length) {
+    gulp.watch(images, gulp.series('copy:img', reload));
+  }
+
+  // Слежение за шрифтами
+  gulp.watch(dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}',
+   gulp.series('copy:fonts', reload));
+
+  // Слежение за SVG (спрайты)
+  gulp.watch('*.svg', {cwd: spriteSvgPath}, gulp.series('sprite:svg', reload));
+
+  // Слежение за PNG (спрайты)
+  if(('sprite-png') !== undefined) {
+    gulp.watch('*.png', {cwd: spritePngPath}, gulp.series('sprite:png', reload));
+  }
+  // gulp.watch('*.png', {cwd: spritePngPath}, gulp.series('sprite:png', reload));
+
+  // JS-файлы, которые нужно просто копировать
+  if(jsList.length) {
+    gulp.watch(jsList, gulp.series('js', reload));
+  }
+
+  // JS-файлы, которые нужно просто копировать
+  if(jsList.length) {
+    gulp.watch(jsList, gulp.series('js', reload));
+  }
   //слежение за библиотеками js
   // gulp.watch([
   //   dirs.source + '/js-libs/*.js',
   // ], ['js-libs']);
-  // Слежение за html
-  gulp.watch([
-    dirs.source + '/*.html',
-  ], ['watch:html']);
-  // Слежение за pug
-  gulp.watch([
-    dirs.source + '/**/*.pug',
-  ], ['watch:pug']);
-  // Слежение за изображениями
-  if(images.length) {
-    gulp.watch(images, ['watch:img']);
-  }
-  // Слежение за шрифтами
-  gulp.watch(dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}', ['watch:fonts']);
-  // Слежение за SVG (спрайты)
-  gulp.watch('*.svg', {cwd: spriteSvgPath}, ['watch:sprite:svg']);
-  // Слежение за PNG (спрайты)
-  gulp.watch(spritePngPath + '*.png', {cwd: spritePngPath}, ['watch:sprite:png']);
-  // Слежение за JS
-  if(jsList.length) {
-    gulp.watch(jsList, ['watch:js']);
-  }
-  if(jsLibs.length) {
-    gulp.watch(jsLibs, ['watch:jsl']);
-  }
-});
 
-// Браузерсинк с 3-м галпом — такой браузерсинк...
-gulp.task('watch:html', ['html'], reload);
-gulp.task('watch:pug', ['pug'], reload);
-gulp.task('watch:img', ['copy:img'], reload);
-gulp.task('watch:fonts', ['copy:fonts'], reload);
-gulp.task('watch:sprite:svg', ['sprite:svg'], reload);
-gulp.task('watch:sprite:png', ['sprite:png'], reload);
-gulp.task('watch:js', ['js'], reload);
-// gulp.task('watch:jsl', ['jsl'], reload);
 
-// Отправка в GH pages (ветку gh-pages репозитория)
-gulp.task('deploy', function() {
-  return gulp.src(dirs.build + '/**/*')
-    .pipe(ghPages());
-});
+
+}));
+// Задача по умолчанию
+gulp.task('default',
+  gulp.series('serve')
+);
 
 // Перезагрузка браузера
 function reload (done) {
@@ -363,9 +416,13 @@ function fileExist(path) {
   }
 }
 
-var onError = function(err) {
-  notify.onError({
-    title: 'Error in ' + err.plugin,
-  })(err);
-  this.emit('end');
-};
+
+
+
+
+// var onError = function(err) {
+//   notify.onError({
+//     title: 'Error in ' + err.plugin,
+//   })(err);
+//   this.emit('end');
+// };
