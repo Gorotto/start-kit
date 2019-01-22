@@ -256,7 +256,7 @@ gulp.task('clean', function () {
   return del([
     dirs.build + '/**/*',
     '!' + dirs.build + '/readme.md',
-    dirs.source + '/blocks/sprite-png/img', 
+    dirs.source + '/blocks/sprite-png/img',
 
   ]);
 });
@@ -385,7 +385,7 @@ gulp.task('serve', gulp.series('build', function() {
 
   // JS-файлы, которые нужно просто копировать
   if(jsList.length) {
-    gulp.watch(jsList, gulp.series('js', reload));
+    gulp.watch(jsLibs, gulp.series('jsl', reload));
   }
   //слежение за библиотеками js
   // gulp.watch([
