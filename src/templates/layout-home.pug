@@ -19,8 +19,7 @@ html(class='no-js  page', lang='ru')
 
     block head
       link(rel="shortcut icon", href="img/favicon.ico", type="image/x-icon")
-      
-      link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.0.8/css/all.css")
+
       link(rel='stylesheet', href='css/libs.min.css')
       link(rel='stylesheet', href='css/style.min.css')
       script.
@@ -28,10 +27,12 @@ html(class='no-js  page', lang='ru')
 
   body
     noscript У вас отключен JavaScript. Это пугает.
-
-    block header
-    block content
-    block footer
+    .page__inner
+      .page__content
+        block header
+        block content
+      .page__footer-wrapper
+        block footer
           
 
     block page-bottom

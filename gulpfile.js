@@ -42,9 +42,7 @@ const htmlbeautify = require('gulp-html-beautify');
 
 // Перечисление и настройки плагинов postCSS, которыми обрабатываются стилевые файлы
 let postCssPlugins = [
-  autoprefixer({                                           // автопрефиксирование
-    browsers: ['last 2 version']
-  }),
+  autoprefixer({grid: true}),
   mqpacker({                                               // объединение медиавыражений с последующей их сортировкой
     sort: true
   }),

@@ -9,32 +9,32 @@
   }
 }
 
-// .page { // html
-//
-//   $block-name:                &; // #{$block-name}__element
-//
-//   box-sizing: border-box;
-//   font-size: 10px;
-//   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-//   -ms-overflow-style: scrollbar;
-//   -ms-text-size-adjust: 100%; // stylelint-disable-line  property-no-vendor-prefix
-//   min-width: 320px;
-//   min-height: 100%;
-//
-//   &__inner {
-//     min-height: 100vh;
-//     display: flex;
-//     flex-direction: column;
-//   }
-//
-//   &__content {
-//     flex-grow: 1;
-//   }
-//
-//   &__footer-wrapper {
-//     flex-shrink: 0;
-//   }
-// }
+.page { // html
+
+  $block-name:                &; // #{$block-name}__element
+
+  box-sizing: border-box;
+  font-size: 10px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -ms-overflow-style: scrollbar;
+  -ms-text-size-adjust: 100%; // stylelint-disable-line  property-no-vendor-prefix
+  min-width: 320px;
+  min-height: 100%;
+
+  &__inner {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__content {
+    flex-grow: 1;
+  }
+
+  &__footer-wrapper {
+    flex-shrink: 0;
+  }
+}
 
 *,
 *:before,
@@ -50,6 +50,32 @@ body {
   font-size: $font-size;
   line-height: $line-height;
   color: $text-color;
+}
+
+
+
+/* Убираем внутренние отступы */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Убираем внешние отступы */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
 }
 
 [tabindex='-1']:focus {
@@ -92,3 +118,51 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+button,
+select { 
+  text-transform: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+ }
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+}
+ 
+ button::-moz-focus-inner,
+ [type="button"]::-moz-focus-inner,
+ [type="reset"]::-moz-focus-inner,
+ [type="submit"]::-moz-focus-inner {
+   padding: 0;
+   border-style: none;
+ }
+
+ button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+ 
+ textarea {
+   overflow: auto;   // Удаление верт. скролла в IE.
+   resize: vertical; // Правильное изменение размеров
+ }
+ 
+ svg {
+   fill: currentColor;
+ 
+   a &,
+   button & {
+     pointer-events: none; // Мы любим Edge, это браузер! (почти)
+   }
+ 
+   &:not(:root) {
+     overflow: hidden; // Скрыть выступающее за границы в IE
+   }
+ }
